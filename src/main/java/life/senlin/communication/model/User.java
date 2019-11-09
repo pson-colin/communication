@@ -12,6 +12,18 @@ public class User {
     private Long gmtCreate;
     private Long gmtModify;
 
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    private String avatarUrl;
+
+
+
     public Integer getId() {
         return id;
     }

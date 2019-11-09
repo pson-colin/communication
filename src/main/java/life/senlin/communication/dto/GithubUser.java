@@ -8,16 +8,24 @@ public class GithubUser {
     private String name;
     private Long id;
     private String bio;
+    private String avatarUrl;
 
     @Override
     public String toString() {
         return "GithubUser{" +
                 "name='" + name + '\'' +
-                ", id='" + id + '\'' +
+                ", id=" + id +
                 ", bio='" + bio + '\'' +
+                ", avatarUrl='" + avatarUrl + '\'' +
                 '}';
     }
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
 
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
     public String getName() {
         return name;
     }
