@@ -5,6 +5,7 @@ import life.senlin.communication.dto.AccessTokenDTO;
 import life.senlin.communication.dto.GithubUser;
 import life.senlin.communication.mapper.UserMapper;
 import life.senlin.communication.model.User;
+import life.senlin.communication.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -25,6 +26,8 @@ public class AuthorizeController {
 
     @Autowired
     private GithubProvider githubProvider;
+    @Autowired
+    private UserService userService;
 
     @Value("${github.client.id}")
     private String client_id;
@@ -33,9 +36,6 @@ public class AuthorizeController {
     @Value("${github.redirect.uri}")
     private String redirect_uri;
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    @Autowired
-    private UserMapper userMapper;
     @GetMapping("/callback")
     public String callback(@RequestParam(value = "code") String code,
                            @RequestParam(value = "state") String state,
@@ -54,10 +54,8 @@ public class AuthorizeController {
             user.setToken(token);
             user.setAccountId(String.valueOf(githubUser.getId()));
             user.setName(githubUser.getName());
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModify(user.getGmtCreate());
             user.setAvatarUrl(githubUser.getAvatarUrl());
-            userMapper.insert(user);
+            userService.createOrUpdate(user);
             response.addCookie(new Cookie("token",token));
             return "redirect:/";
         }else{
@@ -65,5 +63,18 @@ public class AuthorizeController {
             return "redirect:/";
         }
 
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request,
+                         HttpServletResponse response){
+        //删除session中的user
+        request.getSession().removeAttribute("user");
+        //删除cookies中的token
+        Cookie cookie = new Cookie("token",null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        return "redirect:/";
     }
 }
