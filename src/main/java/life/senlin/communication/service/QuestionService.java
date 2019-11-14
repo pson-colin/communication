@@ -2,6 +2,8 @@ package life.senlin.communication.service;
 
 import life.senlin.communication.dto.PaginationDTO;
 import life.senlin.communication.dto.QuestionDTO;
+import life.senlin.communication.exception.CustomizeErrorCode;
+import life.senlin.communication.exception.CustomizeException;
 import life.senlin.communication.mapper.QuestionMapper;
 import life.senlin.communication.mapper.UserMapper;
 import life.senlin.communication.model.Question;
@@ -105,6 +107,9 @@ public class QuestionService {
 
     public QuestionDTO findById(Integer id) {
         Question question = questionMapper.selectByPrimaryKey(id);
+        if(question == null){
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
         User user = userMapper.selectByPrimaryKey(question.getCreator());
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question,questionDTO);
@@ -123,7 +128,10 @@ public class QuestionService {
 
             QuestionExample questionExample = new QuestionExample();
             questionExample.createCriteria().andIdEqualTo(question.getId());
-            questionMapper.updateByExample(upDateQuestion, questionExample);
+            int updated = questionMapper.updateByExample(upDateQuestion, questionExample);
+            if(updated != 1){
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
         }else{
             //创建操作
             question.setGmtCreate(System.currentTimeMillis());
