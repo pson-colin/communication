@@ -4,6 +4,7 @@ import life.senlin.communication.dto.PaginationDTO;
 import life.senlin.communication.dto.QuestionDTO;
 import life.senlin.communication.exception.CustomizeErrorCode;
 import life.senlin.communication.exception.CustomizeException;
+import life.senlin.communication.mapper.QuestionExtMapper;
 import life.senlin.communication.mapper.QuestionMapper;
 import life.senlin.communication.mapper.UserMapper;
 import life.senlin.communication.model.Question;
@@ -26,6 +27,8 @@ public class QuestionService {
 
     @Autowired
     QuestionMapper questionMapper;
+    @Autowired
+    QuestionExtMapper questionExtMapper;
     @Autowired
     UserMapper userMapper;
 
@@ -107,18 +110,18 @@ public class QuestionService {
 
     public QuestionDTO findById(Integer id) {
         Question question = questionMapper.selectByPrimaryKey(id);
-        if(question == null){
+        if (question == null) {
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
         }
         User user = userMapper.selectByPrimaryKey(question.getCreator());
         QuestionDTO questionDTO = new QuestionDTO();
-        BeanUtils.copyProperties(question,questionDTO);
+        BeanUtils.copyProperties(question, questionDTO);
         questionDTO.setUser(user);
         return questionDTO;
     }
 
     public void createOrUpdate(Question question) {
-        if(question.getId() != null){
+        if (question.getId() != null) {
             //更新操作
             Question upDateQuestion = new Question();
             upDateQuestion.setTitle(question.getTitle());
@@ -129,14 +132,21 @@ public class QuestionService {
             QuestionExample questionExample = new QuestionExample();
             questionExample.createCriteria().andIdEqualTo(question.getId());
             int updated = questionMapper.updateByExample(upDateQuestion, questionExample);
-            if(updated != 1){
+            if (updated != 1) {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
-        }else{
+        } else {
             //创建操作
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModify(question.getGmtCreate());
-            questionMapper.insert(question);
+            questionMapper.insertSelective(question);
         }
+    }
+
+    public void incView(Integer id) {
+        Question question = new Question();
+        question.setId(id);
+        question.setViewCount(1);
+        questionExtMapper.incView(question);
     }
 }
