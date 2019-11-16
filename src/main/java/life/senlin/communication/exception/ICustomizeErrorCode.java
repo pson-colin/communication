@@ -6,4 +6,5 @@ package life.senlin.communication.exception;
  */
 public interface ICustomizeErrorCode {
     String getMessage();
+    Integer getCode();
 }
