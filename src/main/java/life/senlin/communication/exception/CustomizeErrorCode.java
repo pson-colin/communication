@@ -27,7 +27,7 @@ public enum CustomizeErrorCode implements ICustomizeErrorCode {
 
     @Override
     public Integer getCode() {
-        return null;
+        return code;
     }
 
 

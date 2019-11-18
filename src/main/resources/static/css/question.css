@@ -2,3 +2,16 @@
     font-size: 13px;
     color: #999;
 }
+
+.media-body{
+    padding-top: 10px;
+}
+
+.comment{
+    margin: 10px 0;
+}
+
+.btn-comment{
+    float: right;
+    margin-bottom: 10px;
+}
