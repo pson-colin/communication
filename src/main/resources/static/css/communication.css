@@ -16,3 +16,7 @@ body {
     font-size: 13px;
     color: #999;
 }
+
+.question-title{
+    margin-top: 25px;
+}
