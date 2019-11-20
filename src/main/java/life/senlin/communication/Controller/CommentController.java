@@ -1,7 +1,9 @@
 package life.senlin.communication.Controller;
 
 import life.senlin.communication.dto.CommentCreateDTO;
+import life.senlin.communication.dto.CommentDTO;
 import life.senlin.communication.dto.ResultDTO;
+import life.senlin.communication.enums.CommentTypeEnum;
 import life.senlin.communication.exception.CustomizeErrorCode;
 import life.senlin.communication.model.Comment;
 import life.senlin.communication.model.User;
@@ -9,12 +11,10 @@ import life.senlin.communication.service.CommentService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @Author: colin
@@ -47,5 +47,12 @@ public class CommentController {
         comment.setLikeCount(0L);
         commentService.insert(comment);
         return ResultDTO.okOf();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/comment/{id}", method = RequestMethod.GET)
+    public ResultDTO<List<CommentDTO>> comments(@PathVariable("id") Long id){
+        List<CommentDTO> commentDTOS = commentService.listByTargetId(id, CommentTypeEnum.COMMENT);
+        return ResultDTO.okOf(commentDTOS);
     }
 }
