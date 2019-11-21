@@ -24,10 +24,10 @@
 
 .menu {
     color: #999;
+    margin-top: 5px;
 }
 
 .menu .icon {
-    margin-top: 5px;
     margin-right: 6px;
     font-size: 15px;
     cursor: pointer;
@@ -41,13 +41,13 @@
     color: #499ef3;
 }
 
-.comments{
+.comments {
     margin-bottom: 15px;
     padding-bottom: 5px;
     border-bottom: 1px solid #eee;
 }
 
-.sub-comments{
+.sub-comments {
     border-radius: 5px;
     margin-top: 10px;
     border: 1px solid #eee;
@@ -55,6 +55,6 @@
     margin-bottom: 15px;
 }
 
-.sub-comments .btn{
+.sub-comments .btn {
     margin: 10px 0;
 }

@@ -14,6 +14,7 @@ public class CommentDTO {
     private Integer type;
     private Long commentator;
     private String content;
+    private Integer commentCount;
     private Long gmtCreate;
     private Long gmtModify;
     private Long likeCount;

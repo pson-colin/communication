@@ -4,10 +4,7 @@ import life.senlin.communication.dto.CommentDTO;
 import life.senlin.communication.enums.CommentTypeEnum;
 import life.senlin.communication.exception.CustomizeErrorCode;
 import life.senlin.communication.exception.CustomizeException;
-import life.senlin.communication.mapper.CommentMapper;
-import life.senlin.communication.mapper.QuestionExtMapper;
-import life.senlin.communication.mapper.QuestionMapper;
-import life.senlin.communication.mapper.UserMapper;
+import life.senlin.communication.mapper.*;
 import life.senlin.communication.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +32,8 @@ public class CommentService {
     private QuestionExtMapper questionExtMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private CommentExtMapper commentExtMapper;
 
     @Transactional
     public void insert(Comment comment) {
@@ -52,6 +51,11 @@ public class CommentService {
             }
             commentMapper.insert(comment);
 
+            //增加评论数
+            Comment parentComment = new Comment();
+            parentComment.setId(comment.getParentId());
+            parentComment.setCommentCount(1);
+            commentExtMapper.incComment(parentComment);
         } else {
             //回复问题
             Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
