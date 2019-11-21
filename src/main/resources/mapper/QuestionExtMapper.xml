@@ -12,7 +12,6 @@
     <result column="LIKE_COUNT" jdbcType="INTEGER" property="likeCount" />
     <result column="TAG" jdbcType="VARCHAR" property="tag" />
   </resultMap>
-
   <update id="incView" parameterType="life.senlin.communication.model.Question">
     update QUESTION
     set
@@ -26,4 +25,10 @@
     COMMENT_COUNT = COMMENT_COUNT + #{commentCount,jdbcType=INTEGER}
     where id = #{id}
   </update>
+
+  <select id="selectRelated" parameterType="life.senlin.communication.model.Question" resultMap="BaseResultMap">
+    select *
+    from QUESTION
+    where id != #{id} and tag regexp #{tag}
+  </select>
 </mapper>

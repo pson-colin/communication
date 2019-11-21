@@ -3,6 +3,7 @@ package life.senlin.communication.Controller;
 import life.senlin.communication.dto.CommentDTO;
 import life.senlin.communication.dto.QuestionDTO;
 import life.senlin.communication.enums.CommentTypeEnum;
+import life.senlin.communication.model.Question;
 import life.senlin.communication.service.CommentService;
 import life.senlin.communication.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +30,14 @@ public class QuestionController {
     public String question(@PathVariable("id") Long id,
                            Model model) {
         QuestionDTO questionDTO = questionService.findById(id);
+        //根据tag获取相关问题
+        List<QuestionDTO> relatedQuestions = questionService.selectRelated(questionDTO);
         List<CommentDTO> comments = commentService.listByTargetId(id, CommentTypeEnum.QUESTION);
         //累加阅读数
         questionService.incView(id);
         model.addAttribute("question", questionDTO);
         model.addAttribute("comments", comments);
+        model.addAttribute("relatedQuestions",relatedQuestions);
         return "question";
     }
 }

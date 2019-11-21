@@ -12,12 +12,12 @@ body {
     margin-bottom: 15px;
 }
 
-.communicate-menu{
+.communicate-menu {
     font-size: 13px;
     color: #999;
 }
 
-.question-title{
+.question-title {
     margin-top: 25px;
 }
 
@@ -28,4 +28,20 @@ body {
 
 .menu .comment-icon:hover {
     color: #499ef3;
+}
+
+.question-tag {
+    margin-right: 5px;
+}
+
+.question-related {
+    line-height: 20px;
+    font-size: 12px;
+    margin-left: 0;
+    list-style: none;
+    padding-left: 0;
+}
+
+.girl {
+    width: 100%;
 }
