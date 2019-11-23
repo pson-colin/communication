@@ -2,6 +2,7 @@ package life.senlin.communication.Controller;
 
 import life.senlin.communication.dto.PaginationDTO;
 import life.senlin.communication.model.User;
+import life.senlin.communication.service.NotificationService;
 import life.senlin.communication.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 public class ProfileController {
     @Autowired
     QuestionService questionService;
+    @Autowired
+    NotificationService notificationService;
 
     @GetMapping("/profile/{action}")
     public String profile(@PathVariable("action") String action,
@@ -36,13 +39,16 @@ public class ProfileController {
         if ("questions".equals(action)) {
             model.addAttribute("section", "questions");
             model.addAttribute("sectionName", "我的提问");
+            //查找用户的问题列表
+            PaginationDTO paginationDTO = questionService.list(user.getId(), page, size);
+            model.addAttribute("pagination", paginationDTO);
         } else if ("replies".equals(action)) {
+            PaginationDTO paginationDTO = notificationService.list(user.getId(), page, size);
             model.addAttribute("section", "replies");
             model.addAttribute("sectionName", "最新回复");
+            model.addAttribute("pagination",paginationDTO);
         }
-        //查找用户的问题列表
-        PaginationDTO paginationDTO = questionService.list(user.getId(), page, size);
-        model.addAttribute("pagination", paginationDTO);
+
         return "profile";
     }
 }

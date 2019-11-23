@@ -11,8 +11,8 @@ import java.util.List;
  * @Date: 12:50 2019/11/10
  */
 @Data
-public class PaginationDTO {
-    private List<QuestionDTO> questions;
+public class PaginationDTO<T> {
+    private List<T> data;
     private boolean showPrevious;
     private boolean showFirstPage;
     private boolean showEndPage;
@@ -28,9 +28,9 @@ public class PaginationDTO {
         pages.add(page);
         for (int i = 1; i <= 3; i++) {
             if (page - i > 0) {
-                pages.add(0,page - i);
+                pages.add(0, page - i);
             }
-            if(page + i <= totalPage){
+            if (page + i <= totalPage) {
                 pages.add(page + i);
             }
 
