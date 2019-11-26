@@ -8,10 +8,14 @@
     <link rel="stylesheet" href="/css/question.css"/>
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
     <link rel="stylesheet" href="/css/communication.css"/>
+    <link rel="stylesheet" href="/css/editormd.preview.min.css" />
     <script src="/js/jquery-3.4.1.min.js"></script>
     <script src="/js/bootstrap.min.js" type="application/javascript"></script>
     <script src="/js/moment.js" type="application/javascript"></script>
     <script src="/js/communication.js" type="application/javascript"></script>
+    <script src="/js/editormd.min.js" type="application/javascript"></script>
+    <script src="/js/lib/marked.min.js"></script>
+    <script src="/js/lib/prettify.min.js"></script>
 </head>
 <body>
 <div th:insert="~{navigation :: nav}"></div>
@@ -30,7 +34,14 @@
             </span>
                 <!--内容描述-->
                 <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:text="${question.description}"></div>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="question-view" >
+                    <textarea style="display:none;" th:text="${question.description}"></textarea>
+                </div>
+                <script type="text/javascript">
+                    $(function() {
+                        editormd.markdownToHTML("question-view", {});
+                    });
+                </script>
                 <!--标签-->
                 <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -100,19 +111,17 @@
                 <h4>提交回复</h4>
                 <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12 comment-sp">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="comment_section">
-                    <div class="media" th:if="${session.user != null}">
                         <div class="media-left">
                             <a href="#">
                                 <img class="media-object img-rounded media-avatar"
-                                     th:src="${session.user.getAvatarUrl()}">
+                                     th:src="${session.user != null ? session.user.getAvatarUrl() : '/images/default-avatar.png'}">
                             </a>
                         </div>
                         <div class="media-body">
                             <h5 class="media-heading">
-                                <span th:text="${session.user.getName()}"></span>
+                                <span th:text="${session.user != null ? session.user.getName() : '匿名用户'}"></span>
                             </h5>
                         </div>
-                    </div>
                     <input type="hidden" id="question_id" th:value="${question.id}">
                     <textarea class="form-control comment" rows="6" id="comment_content"></textarea>
                     <button type="button" class="btn btn-success btn-comment" onclick="post()">回复</button>
@@ -141,7 +150,7 @@
             <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <h4>无关图片~</h4>
-                <img class="img-thumbnail girl" src="/img/qiong.jpg">
+                <img class="img-thumbnail girl" src="/images/qiong.jpg">
             </div>
             <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
