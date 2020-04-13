@@ -39,28 +39,34 @@ public class CommentService {
     @Autowired
     private NotificationMapper notificationMapper;
 
+    //在评论表中插入评论
     @Transactional
     public void insert(Comment comment, User commentator) {
+        //评论所在的话题编号不清楚，抛出异常
         if (comment.getParentId() == null || comment.getParentId() == 0) {
             throw new CustomizeException(CustomizeErrorCode.TARGET_PARAM_NOT_FOUND);
         }
+        //评论的类型错误，抛出异常
         if (comment.getType() == null || !CommentTypeEnum.isExist(comment.getType())) {
             throw new CustomizeException(CustomizeErrorCode.TYPE_PARAM_WRONG);
         }
         if (comment.getType() == CommentTypeEnum.COMMENT.getType()) {
-            //回复评论
+            //评论类型为二级评论
             Comment dbComment = commentMapper.selectByPrimaryKey(comment.getParentId());
+            //找不到该评论的上级评论，抛出异常
             if (dbComment == null) {
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }
             Question question = questionMapper.selectByPrimaryKey(dbComment.getParentId());
+            //找不到该评论所在的话题，抛出异常
             if (question == null) {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
+            //插入评论
             comment.setCommentCount(0);
             commentMapper.insert(comment);
 
-            //增加评论数
+            //上级评论的评论数加一
             Comment parentComment = new Comment();
             parentComment.setId(comment.getParentId());
             parentComment.setCommentCount(1);
@@ -68,11 +74,13 @@ public class CommentService {
             //创建通知
             createNotify(comment, dbComment.getCommentator(),commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_COMMENT, question.getId());
         } else {
-            //回复问题
+            //评论类型为一级评论
             Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
+            //找不到评论所在的话题，抛出异常
             if (question == null) {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
+            //插入评论，话题的评论数加一
             comment.setCommentCount(0);
             question.setCommentCount(1);
             commentMapper.insert(comment);
@@ -82,7 +90,9 @@ public class CommentService {
         }
     }
 
+    //创建通知
     private void createNotify(Comment comment, Long receiver, String notifierName, String outerTitle, NotificationTypeEnum notificationType, Long outerId) {
+        //如果话题的创建人和评论者相同，不需要创建通知
         if(receiver == comment.getCommentator()){
             return;
         }
@@ -97,7 +107,7 @@ public class CommentService {
         notification.setOuterTitle(outerTitle);
         notificationMapper.insert(notification);
     }
-
+    //获取评论列表
     public List<CommentDTO> listByTargetId(Long id, CommentTypeEnum commentTypeEnum) {
         CommentExample example = new CommentExample();
         example.createCriteria()

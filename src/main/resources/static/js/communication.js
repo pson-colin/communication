@@ -1,5 +1,5 @@
 /**
- * 提交回复
+ * 提交对话题的回复
  */
 function post() {
     var questionId = $("#question_id").val();
@@ -39,7 +39,9 @@ function comment2target(targetId, content, type) {
         dataType: "json"
     });
 }
-
+/**
+ * 提交对评论的评论
+ */
 function comment(e) {
     var commentId = e.getAttribute("data-id");
     var content = $("#input-" + commentId).val();
@@ -99,7 +101,9 @@ function collapseComments(e) {
         }
     }
 }
-
+/**
+ * 选择标签库的标签进行添加
+ */
 function selectTag(e) {
     var value = e.getAttribute("data-tag");
     var previous = $("#tag").val();
@@ -111,7 +115,9 @@ function selectTag(e) {
         }
     }
 }
-
+/**
+ * 展开标签库
+ */
 function showSelectTag() {
     $("#select-tag").show();
 }

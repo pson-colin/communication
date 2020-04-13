@@ -20,6 +20,7 @@ public class IndexController {
     @Autowired
     private QuestionService questionService;
 
+    //首页话题列表加载
     @GetMapping("/")
     public String index(HttpServletRequest request,
                         Model model,

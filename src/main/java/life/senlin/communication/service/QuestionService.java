@@ -36,8 +36,10 @@ public class QuestionService {
     @Autowired
     UserMapper userMapper;
 
+    //为主页的话题列表进行分页查询
     public PaginationDTO list(String search,Integer page, Integer size) {
         if(StringUtils.isNotBlank(search)){
+            //对搜索关键词进行正则处理
             String[] tags = StringUtils.split(search," ");
             search = Arrays.stream(tags).collect(Collectors.joining("|"));
         }
@@ -61,13 +63,14 @@ public class QuestionService {
 
         Integer offset = size * (page - 1);
 
+        //让问题列表按问题的创建时间倒叙排列
         QuestionExample questionExample = new QuestionExample();
         questionExample.setOrderByClause("gmt_create desc");
         questionQueryDTO.setSize(size);
         questionQueryDTO.setPage(offset);
         List<Question> questions = questionExtMapper.selectBySearch(questionQueryDTO);
+        //将话题对象封装为话题传输对象
         List<QuestionDTO> questionDTOList = new ArrayList<>();
-
         for (Question question : questions) {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
@@ -75,19 +78,21 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
+        //将话题传输对象放到分页传输对象上
         paginationDTO.setData(questionDTOList);
 
 
         return paginationDTO;
     }
 
+    //为用户的个人话题列表进行分页查询，page是指第几页，size指每一页的容量
     public PaginationDTO list(Long userId, Integer page, Integer size) {
         PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO<>();
-        Integer totalPage;
+        Integer totalPage;//总页数
 
         QuestionExample questionExample = new QuestionExample();
         questionExample.createCriteria().andCreatorEqualTo(userId);
-        Integer totalCount = (int) questionMapper.countByExample(questionExample);
+        Integer totalCount = (int) questionMapper.countByExample(questionExample);//总话题数
         if (totalCount % size == 0) {
             totalPage = totalCount / size;
         } else {
@@ -104,11 +109,12 @@ public class QuestionService {
 
         Integer offset = size * (page - 1);
 
+        //查询一页列表上的话题
         QuestionExample example = new QuestionExample();
         example.createCriteria().andCreatorEqualTo(userId);
         List<Question> questions = questionMapper.selectByExampleWithBLOBsWithRowbounds(example, new RowBounds(offset, size));
+        //将话题对象封装为话题传输对象
         List<QuestionDTO> questionDTOList = new ArrayList<>();
-
         for (Question question : questions) {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
@@ -116,12 +122,13 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
+        //将话题传输对象放到分页传输对象上
         paginationDTO.setData(questionDTOList);
 
 
         return paginationDTO;
     }
-
+    //根据话题Id查找话题对象，并将话题对象封装为话题传输对象
     public QuestionDTO findById(Long id) {
         Question question = questionMapper.selectByPrimaryKey(id);
         if (question == null) {
@@ -133,7 +140,7 @@ public class QuestionService {
         questionDTO.setUser(user);
         return questionDTO;
     }
-
+    //更新或创建话题
     public void createOrUpdate(Question question) {
         if (question.getId() != null) {
             //更新操作
@@ -156,24 +163,27 @@ public class QuestionService {
             questionMapper.insertSelective(question);
         }
     }
-
+    //更新话题浏览数
     public void incView(Long id) {
         Question question = new Question();
         question.setId(id);
         question.setViewCount(1);
         questionExtMapper.incView(question);
     }
-
+    //查找相关话题列表
     public List<QuestionDTO> selectRelated(QuestionDTO queryDTO) {
         if (StringUtils.isBlank(queryDTO.getTag())){
             return new ArrayList<>();
         }
+        //将话题的标签正则处理
         String[] tags = StringUtils.split(queryDTO.getTag(),",");
         String regexTag = Arrays.stream(tags).collect(Collectors.joining("|"));
         Question question = new Question();
         question.setId(queryDTO.getId());
         question.setTag(regexTag);
+        //筛选话题表中拥有一个或多个相同标签的话题
         List<Question> questions = questionExtMapper.selectRelated(question);
+        //将话题对象封装为话题传输对象
         List<QuestionDTO> questionDTOs = questions.stream().map(q -> {
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(q,questionDTO);

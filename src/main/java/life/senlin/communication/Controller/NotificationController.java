@@ -33,7 +33,9 @@ public class NotificationController {
         if (user == null) {
             return "redirect:/";
         }
+        //读通知，更新通知为已读状态
         NotificationDTO notificationDTO = notificationService.read(id, user);
+        //若该通知的类型是回答问题或回答评论，则跳转到产生该条通知的话题详情页
         if (NotificationTypeEnum.REPLY_QUESTION.getType() == notificationDTO.getType()
                 || NotificationTypeEnum.REPLY_COMMENT.getType() == notificationDTO.getType()) {
             return "redirect:/question/" + notificationDTO.getOuterid();

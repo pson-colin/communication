@@ -42,7 +42,7 @@ public class TagCache {
         tagDTOS.add(tool);
         return tagDTOS;
     }
-
+    //检验标签是否违反标准
     public static String filterInvalid(String tags){
         String[] split = StringUtils.split(tags,",");
         List<TagDTO> tagDTOS = TagCache.get();

@@ -69,15 +69,17 @@ public class NotificationService {
         example.createCriteria().andReceiverEqualTo(userId).andStatusEqualTo(NotificationStatusEnum.UNREAD.getStatus());
         return notificationMapper.countByExample(example);
     }
-
+    //读通知，更新通知状态
     public NotificationDTO read(Long id, User user) {
         Notification notification = notificationMapper.selectByPrimaryKey(id);
         if(notification == null){
             throw new CustomizeException(CustomizeErrorCode.NOTIFICATION_NOT_FOUND);
         }
+        //如果用户id和通知的接收者id不同，抛出异常
         if(!notification.getReceiver().equals(user.getId())){
             throw new CustomizeException(CustomizeErrorCode.READ_NOTIFICATION_FAIL);
         }
+        //更新数据库中该通知的状态为已读
         notification.setStatus(NotificationStatusEnum.READ.getStatus());
         notificationMapper.updateByPrimaryKey(notification);
 

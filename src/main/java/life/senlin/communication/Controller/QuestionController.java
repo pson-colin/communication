@@ -32,9 +32,11 @@ public class QuestionController {
         QuestionDTO questionDTO = questionService.findById(id);
         //根据tag获取相关问题
         List<QuestionDTO> relatedQuestions = questionService.selectRelated(questionDTO);
+        //获取话题的所有一级评论
         List<CommentDTO> comments = commentService.listByTargetId(id, CommentTypeEnum.QUESTION);
-        //累加阅读数
+        //累加话题的阅读数
         questionService.incView(id);
+        //将该话题相关数据传给视图层
         model.addAttribute("question", questionDTO);
         model.addAttribute("comments", comments);
         model.addAttribute("relatedQuestions",relatedQuestions);

@@ -18,6 +18,7 @@ public class UserService {
     UserMapper userMapper;
 
     public void createOrUpdate(User user) {
+        //通过Github账号查找数据库中是否已存在用户
         UserExample userExample = new UserExample();
         userExample.createCriteria().andAccountIdEqualTo(user.getAccountId());
         List<User> dbUsers = userMapper.selectByExample(userExample);

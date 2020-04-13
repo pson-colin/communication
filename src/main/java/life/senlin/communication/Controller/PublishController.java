@@ -25,6 +25,7 @@ public class PublishController {
     @Autowired
     QuestionService questionService;
 
+    //编辑话题
     @GetMapping("/publish/{id}")
     public String edit(@PathVariable("id") Long id,
                        Model model) {
@@ -36,13 +37,14 @@ public class PublishController {
         model.addAttribute("tags", TagCache.get());
         return "publish";
     }
-
+    //发布话题
     @GetMapping("/publish")
     public String publish(Model model) {
         model.addAttribute("tags", TagCache.get());
         return "publish";
     }
 
+    //话题发布提交
     @PostMapping("/publish")
     public String doPublish(
             @RequestParam("title") String title,
@@ -56,6 +58,7 @@ public class PublishController {
         model.addAttribute("description", description);
         model.addAttribute("tag", tag);
         model.addAttribute("tags", TagCache.get());
+        //标题，正文和标签都不能为空，否则提示错误信息到视图层。
         if (title == null || title == "") {
             model.addAttribute("error", "标题不能为空");
             return "publish";
@@ -68,7 +71,7 @@ public class PublishController {
             model.addAttribute("error", "标签不能为空");
             return "publish";
         }
-
+        //检验是否有标签不存在于标签库中，有则提示错误信息到视图层。
         String invalid = TagCache.filterInvalid(tag);
         if(StringUtils.isNotBlank(invalid)){
             model.addAttribute("error", "输入非法标签:"+invalid);
@@ -80,7 +83,7 @@ public class PublishController {
             model.addAttribute("error", "用户未登录");
             return "publish";
         }
-
+        //创建话题，并存入数据库
         Question question = new Question();
         question.setCreator(user.getId());
         question.setDescription(description);

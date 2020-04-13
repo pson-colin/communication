@@ -19,7 +19,7 @@ public class PaginationDTO<T> {
     private boolean showNext;
     private Integer currentPage;
     private Integer totalPage;
-    private List<Integer> pages = new ArrayList<Integer>();
+    private List<Integer> pages = new ArrayList<>();
 
     public void setPagination(Integer totalPage, Integer page) {
         this.totalPage = totalPage;

@@ -31,12 +31,15 @@ public class CommentController {
     public Object post(@RequestBody CommentCreateDTO commentCreateDTO,
                        HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
+        //用户未登录，返回错误信息
         if (user == null) {
             return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
         }
+        //评论内容为空，返回错误信息
         if(commentCreateDTO == null || StringUtils.isBlank(commentCreateDTO.getContent())){
             return ResultDTO.errorOf(CustomizeErrorCode.CONTENT_IS_EMPTY);
         }
+        //创建评论对象，存入数据库
         Comment comment = new Comment();
         comment.setType(commentCreateDTO.getType());
         comment.setParentId(commentCreateDTO.getParentId());
@@ -46,9 +49,11 @@ public class CommentController {
         comment.setCommentator(user.getId());
         comment.setLikeCount(0L);
         commentService.insert(comment,user);
+        //返回成功信息
         return ResultDTO.okOf();
     }
 
+    //获取二级评论列表
     @ResponseBody
     @RequestMapping(value = "/comment/{id}", method = RequestMethod.GET)
     public ResultDTO<List<CommentDTO>> comments(@PathVariable("id") Long id){
